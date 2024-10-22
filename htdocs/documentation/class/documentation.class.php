@@ -63,6 +63,7 @@ class Documentation
 		'Badges' => array('url' => dol_buildpath('documentation/ux/badges.php', 1), 'icon' => 'fas fa-certificate pictofixedwidth','submenu' => array()),
 		'Progress' => array('url' => dol_buildpath('documentation/ux/progress-bars.php', 1), 'icon' => 'fas fa-battery-half pictofixedwidth','submenu' => array()),
 		'Buttons' => array('url' => dol_buildpath('documentation/ux/buttons.php', 1), 'icon' => 'fas fa-mouse pictofixedwidth','submenu' => array()),
+		'Event Message' => array('url' => dol_buildpath('documentation/ux/event-message.php', 1), 'icon' => 'fas fa-comments pictofixedwidth','submenu' => array()),
 		)),
 		);
 	}
@@ -91,6 +92,8 @@ class Documentation
 		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 		print '</head>';
 		print '<body class="dolibarr-doc">';
+
+		top_htmlhead('');
 	}
 
 	/**
@@ -105,6 +108,8 @@ class Documentation
 		print '<script src="'.dol_buildpath('documentation/js/documentation.js', 1).'"></script>';
 		print '</body>';
 		print '</html>';
+
+		dol_htmloutput_events(0);
 	}
 
 	/**
