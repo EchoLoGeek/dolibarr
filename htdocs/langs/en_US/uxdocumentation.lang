@@ -196,5 +196,5 @@ ContextLangToolTest = This text is in english
 LangsLocalChangedTo = Language locale changed to %s. Translations will now use the new locale.
 CacheCleared = Cache cleared
 
-ExperimentalUxInputFileDropZone=Input File Drop
-ExperimentalUxInputFileDropZoneText=Drop items here or <b>Browse files</b>
+ExperimentalUxInputFileDropZone = Input File Drop
+ExperimentalUxInputFileDropZoneText = Drop items here or <b>Browse files</b>
