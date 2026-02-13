@@ -101,11 +101,13 @@ $documentation->showSidebar(); ?>
 				<input type="file" class="flat" id="addedfile" name="addedfile" value="Upload" />
 			</div>
 			<script>
+
 				document.addEventListener('Dolibarr:Init', function(e) {
 
 
-					Dolibarr.defineTool('dropZoneFile',  (inputFileSelector, param = {}) =>{
+					Dolibarr.defineTool('dropZoneFile', async (inputFileSelector, param = {}) =>{
 
+						await Dolibarr.tools.langs.load('uxdocumentation'); // will use cache but need to load lang in new local
 
 						let inputFile = $(inputFileSelector);
 						if(inputFile.length == 0) {
@@ -188,19 +190,14 @@ $documentation->showSidebar(); ?>
 				});
 
 
-			Dolibarr.on('Ready', async function(data) {
-
-				// Load langs
-				await Dolibarr.tools.langs.load('uxdocumentation'); // will use cache but need to load lang in new local
-
-				console.log(await Dolibarr.tools.langs.trans('ExperimentalUxInputFileDropZoneText'));
-				Dolibarr.tools.dropZoneFile('#addedfile', {
-					dropZoneHeight : 324, // should be MAIN_INPUTFILE_DROPZONE_HEIGHT'
-					forceMultiple : 1,
-					dropZoneAutoSubmit : 0,
-					// submitBtn : '#addfile'
-				})
-			});
+				Dolibarr.on('Ready', function() {
+					Dolibarr.tools.dropZoneFile('#addedfile', {
+						dropZoneHeight : 324, // should be MAIN_INPUTFILE_DROPZONE_HEIGHT'
+						forceMultiple : 1,
+						dropZoneAutoSubmit : 0,
+						// submitBtn : '#addfile'
+					})
+				});
 
 			</script>
 			<?php
