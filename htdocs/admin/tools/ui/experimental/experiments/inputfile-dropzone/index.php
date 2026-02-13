@@ -106,6 +106,7 @@ $documentation->showSidebar(); ?>
 
 					Dolibarr.defineTool('dropZoneFile',  (inputFileSelector, param = {}) =>{
 
+
 						let inputFile = $(inputFileSelector);
 						if(inputFile.length == 0) {
 							return;
@@ -128,7 +129,6 @@ $documentation->showSidebar(); ?>
 							inputFile.wrap(function() {
 								return `<div class="ddfilewrap" style="min-height:${param.dropZoneHeight}px;"></div>`;
 							});
-
 
 							// Set Dropzone message
 							let msg = Dolibarr.tools.langs.trans('ExperimentalUxInputFileDropZoneText');
@@ -188,12 +188,12 @@ $documentation->showSidebar(); ?>
 				});
 
 
-			Dolibarr.on('Ready', function(data) {
+			Dolibarr.on('Ready', async function(data) {
 
 				// Load langs
-				Dolibarr.tools.langs.load('uxdocumentation'); // will use cache but need to load lang in new local
+				await Dolibarr.tools.langs.load('uxdocumentation'); // will use cache but need to load lang in new local
 
-				console.log(Dolibarr.tools.langs.trans('ExperimentalUxInputFileDropZoneText'));
+				console.log(await Dolibarr.tools.langs.trans('ExperimentalUxInputFileDropZoneText'));
 				Dolibarr.tools.dropZoneFile('#addedfile', {
 					dropZoneHeight : 324, // should be MAIN_INPUTFILE_DROPZONE_HEIGHT'
 					forceMultiple : 1,
