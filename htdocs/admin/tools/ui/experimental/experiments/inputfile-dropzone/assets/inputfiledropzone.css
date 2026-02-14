@@ -1,6 +1,6 @@
 .ddfilewrap {background: #f5f5f5;min-height: 64px;position: relative;border:2px dashed #ddd;border-radius: 6px;display: flex;cursor: pointer !important;margin: 8px 0;padding: 24px;box-sizing: border-box;}
 .ddfilewrap:hover {border:2px dashed #aaa;}
 .ddfilewrap.dragged {border:2px dashed #6c6aa8;}
-.ddfilewrap #addedfile {position: absolute;top: 0;left: 0;right: 0;bottom: 0;opacity: 0;cursor: pointer;}
+.ddfilewrap .dropzone-input-file {position: absolute;top: 0;left: 0;right: 0;bottom: 0;opacity: 0;cursor: pointer;}
 .ddfilewrap .ddfiledropinfos {opacity: 0.6;margin: auto;font-weight: 500;pointer-events: none;cursor: pointer;text-align: center;}
 /*.ddfilewrap .ddfiledropinfos .ddfileinfo {}*/

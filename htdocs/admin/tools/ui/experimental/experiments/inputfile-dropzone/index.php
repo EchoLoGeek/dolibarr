@@ -50,7 +50,8 @@ $experimentAssetsPath = $documentation->baseUrl . '/experimental/experiments/inp
 $js = [
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
-	'/includes/ace/src/ext-language_tools.js'
+	'/includes/ace/src/ext-language_tools.js',
+	$experimentAssetsPath . 'inputfiledropzone.js'
 ];
 $css = [
 	$experimentAssetsPath . 'inputfiledropzone.css'
@@ -96,102 +97,22 @@ $documentation->showSidebar(); ?>
 			<div class="documentation-example">
 				<input type="file" class="flat" id="noaddedfile" name="addedfile" value="Upload" />
 			</div>
-			<p><b>New Behavior</b></p>
+			<p><b>New Behavior : Default values</b></p>
 			<div class="documentation-example">
 				<input type="file" class="flat" id="addedfile" name="addedfile" value="Upload" />
 			</div>
+			<p><b>New Behavior : Overridden values</b></p>
+			<div class="documentation-example">
+				<input type="file" class="flat" id="addedfile-override" name="addedfile" value="Upload" />
+			</div>
 			<script>
 
-				document.addEventListener('Dolibarr:Init', function(e) {
-
-
-					Dolibarr.defineTool('dropZoneFile', async (inputFileSelector, param = {}) =>{
-
-						await Dolibarr.tools.langs.load('uxdocumentation'); // will use cache but need to load lang in new local
-
-						let inputFile = $(inputFileSelector);
-						if(inputFile.length == 0) {
-							return;
-						}
-
-						const defaultParams = {
-							dropZoneHeight : null,
-							forceMultiple : 1,
-							dropZoneAutoSubmit : 0,
-							submitBtnSelector : false
-						}
-
-						param = { ...defaultParams, ...param };
-
-						// TODO vérifier que le param.submitBtnSelector est bien un id de type #xxxxxxxx si il est différent de false
-
-						if (inputFile.length) {
-
-							// Wrap input with dropzone
-							inputFile.wrap(function() {
-								return `<div class="ddfilewrap" style="min-height:${param.dropZoneHeight}px;"></div>`;
-							});
-
-							// Set Dropzone message
-							let msg = Dolibarr.tools.langs.trans('ExperimentalUxInputFileDropZoneText');
-							$('.ddfilewrap').append('<div class="ddfiledropinfos">' + msg + '</div>');
-
-							// Drag & Drop classes
-							$('.ddfilewrap').on('dragover',function(e) {
-								$(this).addClass('dragged');
-							});
-							$('.ddfilewrap').on('dragleave',function(e) {
-								$(this).removeClass('dragged');
-							});
-
-							// Display file name on change
-							$('.ddfiledropinfos').append('<div class="ddfileinfo"></div>');
-							inputFile.on('change', function(e) {
-								let files = this.files;
-								let fileInfo = $('.ddfileinfo');
-								if (files.length > 0) {
-									let names = [];
-									for (let i = 0; i < files.length; i++) {
-										names.push(files[i].name);
-									}
-									let langMsg = Dolibarr.tools.langs.trans('Files');
-									let filequeue = `<b>${langMsg}:</b><br>` + names.join('<br>');
-									fileInfo.html(filequeue).show();
-								} else {
-									fileInfo.text('').hide();
-								}
-							});
-
-							if (param.forceMultiple) {
-								// Add multiple attribute if not
-								let attrMultipleInput = inputFile.attr('multiple');
-								if(typeof attrMultipleInput === 'undefined' || attrMultipleInput === false) {
-									inputFile.prop('multiple', true);
-									inputFile.attr('name', inputFile.attr('name') + '[]');
-								}
-							 }
-
-							if (param.dropZoneAutoSubmit) {
-								if(param.submitBtnSelector) {
-									let buttonSubmitFile = $(param.submitBtnSelector);
-									buttonSubmitFile.removeClass('reposition').hide();
-									inputFile.on('change', function(e) {
-										setTimeout(function() {
-											buttonSubmitFile.click();
-										}, 50);
-									});
-								}
-								else{
-									// TODO : submit le form
-								}
-							}
-						}
-					});
-				});
-
-
 				Dolibarr.on('Ready', function() {
-					Dolibarr.tools.dropZoneFile('#addedfile', {
+					// New Behavior : Default values
+					Dolibarr.tools.dropZoneFile('#addedfile');
+
+					// New Behavior : Overridden values
+					Dolibarr.tools.dropZoneFile('#addedfile-override', {
 						dropZoneHeight : 324, // should be MAIN_INPUTFILE_DROPZONE_HEIGHT'
 						forceMultiple : 1,
 						dropZoneAutoSubmit : 0,
@@ -202,54 +123,20 @@ $documentation->showSidebar(); ?>
 			</script>
 			<?php
 			$lines = array(
-				'<?php',
-					'// Define params',
-					'$dropZoneHeight = 324; // should be MAIN_INPUTFILE_DROPZONE_HEIGHT',
-					'$dropZoneAutoSubmit = false; // should be MAIN_INPUTFILE_DROPZONE_AUTOSUBMIT',
-					'$forceMultiple = false; // should be MAIN_INPUTFILE_DROPZONE_FORCEMULTIPLE',
-				'?>',
+
 				'',
 				'<script>',
-				'$(document).ready(function() {',
-				'	let inputFile = $(\'#addedfile\');',
-				'	if (inputFile.length) {',
+				'Dolibarr.on(\'Ready\', function() {',
+				'	// New Behavior : Default values',
+				'	Dolibarr.tools.dropZoneFile(\'#addedfile\'); ',
 				'',
-				'		// Wrap input with dropzone',
-				'		inputFile.wrap(function() {',
-				'			return \'<div class="ddfilewrap" style="height:<?php print $dropZoneHeight; ?>px;"></div>\';',
-				'		}',
-				'',
-				'		// Set Dropzone message',
-				'		let msg = \'<?php echo $langs->trans(\'ExperimentalUxInputFileDropZoneText\'); ?>\';',
-				'		$(\'.ddfilewrap\').append(\'<div class="ddfiledropinfos">\' + msg + \'</div>\');',
-				'',
-				'		// Drag & Drop classes',
-				'		$(\'.ddfilewrap\').on(\'dragover\',function(e) {',
-				'			$(this).addClass(\'dragged\');',
-				'		});',
-				'		$(\'.ddfilewrap\').on(\'dragleave\',function(e) {',
-				'			$(this).removeClass(\'dragged\');',
-				'		});',
-				'',
-				'		<?php if ($forceMultiple) { ?>',
-				'		// Add multiple attribute if not',
-				'		let attrMultipleInput = inputFile.attr(\'multiple\');',
-				'		if(typeof attrMultipleInput === \'undefined\' || attrMultipleInput === false) {',
-				'			inputFile.prop(\'multiple\', true);',
-				'			inputFile.attr(\'name\', inputFile.attr(\'name\') + \'[]\');',
-				'		}',
-				'		<?php } ?>',
-				'',
-				'		<?php if ($dropZoneAutoSubmit) { ?>',
-				'		let buttonSubmitFile = $(\'#addfile\');',
-				'		buttonSubmitFile.removeClass(\'reposition\').hide();',
-				'		inputFile.on(\'change\', function(e) {',
-				'			setTimeout(function(){',
-				'				buttonSubmitFile.click();',
-				'			}, 50);',
-				'		});',
-				'		<?php } ?>',
-				'	}',
+				'	// New Behavior : Override values',
+				'	Dolibarr.tools.dropZoneFile(\'#addedfile-override\', {',
+				'		dropZoneHeight : 324, // should be MAIN_INPUTFILE_DROPZONE_HEIGHT',
+				'			forceMultiple : 0, // Default 1',
+				'			dropZoneAutoSubmit : 0, // Default 0',
+				'			// submitBtn : \'#addfile\' // Default false',
+				'	});',
 				'});',
 				'</script>',
 			);

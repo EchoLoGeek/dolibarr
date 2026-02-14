@@ -1,40 +1,90 @@
-$( document ).ready(function() {
 
-	let inputFile = $('#addedfile');
+document.addEventListener('Dolibarr:Init', function(e) {
 
-	// Si champ input file
-	if (inputFile.length) {
 
-		let buttonSubmitFile = $('#addfile');
-		buttonSubmitFile.removeClass('reposition').hide();
+	Dolibarr.defineTool('dropZoneFile', async (inputFileSelector, param = {}) =>{
 
-		// Wrap input with dropzone
-		inputFile.wrap(function(){
-			 return '<div class="ddfilewrap"></div>';
-		});
+		await Dolibarr.tools.langs.load('uxdocumentation'); // will use cache but need to load lang in new local
 
-		// Add multiple attribute if not
-		var attrMultipleInput = inputFile.attr('multiple');
-		if(typeof attrMultipleInput === 'undefined' || attrMultipleInput === false) {
-			inputFile.prop('multiple', true);
-			inputFile.attr('name', inputFile.attr('name') + '[]');
+		let inputFile = $(inputFileSelector);
+		if(inputFile.length == 0) {
+			return;
 		}
 
-		let msg = 'Drop items here or <b>Browse files</b>';
-		if (document.documentElement.lang == 'fr') {
-			msg = 'Déplacez vos fichiers ici ou <b>cliquez ici pour choisir des fichiers</b>';
+		const defaultParams = {
+			dropZoneHeight : null,
+			forceMultiple : 1,
+			dropZoneAutoSubmit : 0,
+			submitBtnSelector : false
 		}
 
-		// Set Dropzone message
-		$('.ddfilewrap').append('<div class="ddfiledropinfos">'+msg+'</div>');
+		param = { ...defaultParams, ...param };
 
-		jQuery('.ddfilewrap').on('dragover',function(e){ jQuery(this).addClass('dragged'); });
-		jQuery('.ddfilewrap').on('dragleave',function(e){ jQuery(this).removeClass('dragged'); });
+		// TODO vérifier que le param.submitBtnSelector est bien un id de type #xxxxxxxx si il est différent de false
 
-		inputFile.on('change', function(e) {
-			setTimeout(function(){
-				buttonSubmitFile.click();
-			}, 50);
-		});
-	}
+		if (inputFile.length) {
+
+			inputFile.addClass('dropzone-input-file');
+
+			// Wrap input with dropzone
+			inputFile.wrap(function() {
+				return `<div class="ddfilewrap" style="min-height:${param.dropZoneHeight}px;"></div>`;
+			});
+
+			// Set Dropzone message
+			let msg = Dolibarr.tools.langs.trans('ExperimentalUxInputFileDropZoneText');
+			let ddfilewrap = inputFile.parent('.ddfilewrap');
+			ddfilewrap.append('<div class="ddfiledropinfos">' + msg + '</div>');
+
+			// Drag & Drop classes
+			ddfilewrap.on('dragover',function(e) {
+				$(this).addClass('dragged');
+			});
+			ddfilewrap.on('dragleave',function(e) {
+				$(this).removeClass('dragged');
+			});
+
+			// Display file name on change
+			ddfilewrap.find('.ddfiledropinfos').append('<div class="ddfileinfo"></div>');
+			inputFile.on('change', function(e) {
+				let files = this.files;
+				let fileInfo = ddfilewrap.find('.ddfileinfo');
+				if (files.length > 0) {
+					let names = [];
+					for (let i = 0; i < files.length; i++) {
+						names.push(files[i].name);
+					}
+					let langMsg = Dolibarr.tools.langs.trans('Files');
+					let filequeue = `<b>${langMsg}:</b><br>` + names.join('<br>');
+					fileInfo.html(filequeue).show();
+				} else {
+					fileInfo.text('').hide();
+				}
+			});
+
+			if (param.forceMultiple) {
+				// Add multiple attribute if not
+				let attrMultipleInput = inputFile.attr('multiple');
+				if(typeof attrMultipleInput === 'undefined' || attrMultipleInput === false) {
+					inputFile.prop('multiple', true);
+					inputFile.attr('name', inputFile.attr('name') + '[]');
+				}
+			}
+
+			if (param.dropZoneAutoSubmit) {
+				if(param.submitBtnSelector) {
+					let buttonSubmitFile = $(param.submitBtnSelector);
+					buttonSubmitFile.removeClass('reposition').hide();
+					inputFile.on('change', function(e) {
+						setTimeout(function() {
+							buttonSubmitFile.click();
+						}, 50);
+					});
+				}
+				else{
+					// TODO : submit le form
+				}
+			}
+		}
+	});
 });
