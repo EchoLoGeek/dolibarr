@@ -95,11 +95,11 @@ $documentation->showSidebar(); ?>
 			</ul>
 			<h4>Current behavior</h4>
 			<div class="documentation-example">
-				<input type="file" class="flat" id="noaddedfile" name="addedfile" value="Upload" />
+				<input type="file" class="flat" id="noaddedfile" name="addedfile" value="Upload"  />
 			</div>
 			<p><b>New Behavior : Default values</b></p>
 			<div class="documentation-example">
-				<input type="file" class="flat" id="addedfile" name="addedfile" value="Upload" />
+				<input type="file" class="flat" id="addedfile" name="addedfile" value="Upload"  accept=".jpg,.png',.pdf" />
 			</div>
 			<p><b>New Behavior : Overridden values</b></p>
 			<div class="documentation-example">
@@ -114,9 +114,12 @@ $documentation->showSidebar(); ?>
 					// New Behavior : Overridden values
 					Dolibarr.tools.dropZoneFile('#addedfile-override', {
 						dropZoneHeight : 324, // should be MAIN_INPUTFILE_DROPZONE_HEIGHT'
-						forceMultiple : 1,
 						dropZoneAutoSubmit : 0,
 						// submitBtn : '#addfile'
+						maxFileSize: 5 * 1024 * 1024,   // 5 MB max
+						allowedTypes: ['.jpg', '.png'],// , '.pdf' // only these extensions
+						showMaxFileSize: true,          // show max size info in dropzone
+						showAllowedTypes: true          // show allowed types info
 					})
 				});
 

@@ -1,6 +1,94 @@
-.ddfilewrap {background: #f5f5f5;min-height: 64px;position: relative;border:2px dashed #ddd;border-radius: 6px;display: flex;cursor: pointer !important;margin: 8px 0;padding: 24px;box-sizing: border-box;}
-.ddfilewrap:hover {border:2px dashed #aaa;}
-.ddfilewrap.dragged {border:2px dashed #6c6aa8;}
-.ddfilewrap .dropzone-input-file {position: absolute;top: 0;left: 0;right: 0;bottom: 0;opacity: 0;cursor: pointer;}
-.ddfilewrap .ddfiledropinfos {opacity: 0.6;margin: auto;font-weight: 500;pointer-events: none;cursor: pointer;text-align: center;}
-/*.ddfilewrap .ddfiledropinfos .ddfileinfo {}*/
+.ddfilewrap {
+	background: #f5f5f5;
+	min-height: 64px;
+	position: relative;
+	border:2px dashed #ddd;
+	border-radius: 6px;
+	display: flex;
+	cursor: pointer !important;
+	margin: 8px 0;
+	padding: 24px;
+	box-sizing: border-box;
+}
+.ddfilewrap:hover { border:2px dashed #aaa; }
+.ddfilewrap.dragged { border:2px dashed #6c6aa8; }
+.ddfilewrap .dropzone-input-file {
+	position: absolute;
+	top:0; left:0; right:0; bottom:0;
+	opacity:0;
+	cursor:pointer;
+}
+.ddfilewrap .ddfiledropinfos {
+	opacity:0.6;
+	margin:auto;
+	font-weight:500;
+	pointer-events:none;
+	cursor:pointer;
+	text-align:center;
+}
+.ddfilewrap .ddfileinfo span { font-weight:600; }
+.ddfileconstraints {
+	opacity:0.7;
+	font-size:12px;
+	margin-top:4px;
+}
+.ddfilepreviews img {
+	transition: transform 0.2s;
+}
+.ddfilepreviews img:hover {
+	transform: scale(1.1);
+}
+
+.ddfilepreviews {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.ddfilepreview {
+	position: relative;
+	width: 80px;
+	height: 80px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	overflow: hidden;
+	background-size: cover;
+	background-position: center;
+	cursor: pointer;
+}
+
+.ddfilepreview span {
+	position: absolute;
+	top: 2px;
+	right: 4px;
+	color: #900;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.ddfile-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 4px;
+	font-size: 13px;
+	padding: 2px 4px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background: #f9f9f9;
+}
+
+.ddfile-row button {
+	border: none;
+	background: transparent;
+	color: #900;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.ddfile-error {
+	color: red;
+	font-weight: bold;
+	display: block;
+}

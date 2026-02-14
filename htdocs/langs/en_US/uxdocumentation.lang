@@ -196,5 +196,11 @@ ContextLangToolTest = This text is in english
 LangsLocalChangedTo = Language locale changed to %s. Translations will now use the new locale.
 CacheCleared = Cache cleared
 
+// DROPZONE TEXT
 ExperimentalUxInputFileDropZone = Input File Drop
-ExperimentalUxInputFileDropZoneText = Drop items here or <b>Browse files</b>
+ExperimentalUxInputFileDropZoneText = Drop item here or <b>Browse files</b>
+ExperimentalUxInputFilesDropZoneText = Drop items here or <b>Browse files</b>
+MaxFileSize = Max size
+Allowed = Allowed
+InvalidFileType = %s invalid file type
+DropZoneFileExceedsMaxSize = %S file exceed max size
