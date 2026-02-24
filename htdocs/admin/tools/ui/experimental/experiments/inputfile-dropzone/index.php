@@ -88,10 +88,8 @@ $documentation->showSidebar(); ?>
 			</p>
 			<h3>Expected features</h3>
 			<ul>
-				<li><b>MAIN_INPUTFILE_DROPZONE:</b> 0=Do not use this feature | 1=Use this feature</li>
 				<li><b>MAIN_INPUTFILE_DROPZONE_HEIGHT:</b> 0 or empty: default height 64px | > 0 = Dropzone Height</li>
 				<li><b>MAIN_INPUTFILE_DROPZONE_AUTOSUBMIT:</b> 0: Default behaviour | 1: Send file on drop</li>
-				<li><b>MAIN_INPUTFILE_DROPZONE_FORCEMULTIPLE:</b> 0: Default behaviour | 1: Add multiple</li>
 			</ul>
 			<h4>Current behavior</h4>
 			<div class="documentation-example">
@@ -99,7 +97,7 @@ $documentation->showSidebar(); ?>
 			</div>
 			<p><b>New Behavior : Default values</b></p>
 			<div class="documentation-example">
-				<input type="file" class="flat" id="addedfile" name="addedfile" value="Upload"  accept=".jpg,.png',.pdf" />
+				<input type="file" class="flat" id="addedfile" name="addedfile" value="Upload"  accept=".jpg,.png',.pdf" multiple />
 			</div>
 			<p><b>New Behavior : Overridden values</b></p>
 			<div class="documentation-example">
@@ -136,9 +134,8 @@ $documentation->showSidebar(); ?>
 				'	// New Behavior : Override values',
 				'	Dolibarr.tools.dropZoneFile(\'#addedfile-override\', {',
 				'		dropZoneHeight : 324, // should be MAIN_INPUTFILE_DROPZONE_HEIGHT',
-				'			forceMultiple : 0, // Default 1',
-				'			dropZoneAutoSubmit : 0, // Default 0',
-				'			// submitBtn : \'#addfile\' // Default false',
+				'		dropZoneAutoSubmit : 0, // should be MAIN_INPUTFILE_DROPZONE_AUTOSUBMIT, default 0',
+				'		// submitBtn : \'#addfile\' // Default false',
 				'	});',
 				'});',
 				'</script>',

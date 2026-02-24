@@ -19,13 +19,17 @@
 	cursor:pointer;
 }
 .ddfilewrap .ddfiledropinfos {
-	opacity:0.6;
 	margin:auto;
-	font-weight:500;
 	pointer-events:none;
 	cursor:pointer;
 	text-align:center;
+	width:100%;
 }
+.ddfilewrap .ddfiledropmsg {
+	opacity:0.6;
+	font-weight:500;
+}
+.ddfilewrap .ddfileinfo:not(:empty) { margin-top: 16px; }
 .ddfilewrap .ddfileinfo span { font-weight:600; }
 .ddfileconstraints {
 	opacity:0.7;
@@ -44,6 +48,7 @@
 	flex-wrap: wrap;
 	gap: 8px;
 	margin-top: 8px;
+	justify-content: center;
 }
 
 .ddfilepreview {
@@ -70,21 +75,63 @@
 .ddfile-row {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	margin-top: 4px;
-	font-size: 13px;
-	padding: 2px 4px;
-	border: 1px solid #ccc;
+	gap: 10px;
+	margin-top: 8px;
+	padding: 8px;
+	border: 1px solid #e0e0e0;
 	border-radius: 4px;
-	background: #f9f9f9;
+	background: #fff;
+	position: relative;
+	z-index: 1;
+	pointer-events: auto;
+}
+
+.ddfile-thumb {
+	flex-shrink: 0;
+	width: 48px;
+	height: 48px;
+	border-radius: 4px;
+	border: 1px solid #ddd;
+	background: #f0f0f0 center/cover no-repeat;
+}
+
+.ddfile-meta {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	overflow: hidden;
+	text-align: left;
+}
+
+.ddfile-name {
+	font-weight: 700;
+	font-size: 13px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.ddfile-size {
+	font-size: 11px;
+	color: #888;
 }
 
 .ddfile-row button {
+	flex-shrink: 0;
 	border: none;
 	background: transparent;
-	color: #900;
+	color: rgb(197, 21, 21);
 	font-weight: bold;
+	font-size: 16px;
 	cursor: pointer;
+	padding: 0 4px;
+	margin-right: 10px;
+	opacity: 0.75;
+	transition: opacity 0.2s;
+}
+.ddfile-row button:hover {
+	opacity: 1;
 }
 
 .ddfile-error {

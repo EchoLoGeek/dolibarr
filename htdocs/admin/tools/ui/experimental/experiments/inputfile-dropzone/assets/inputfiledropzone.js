@@ -17,7 +17,7 @@ document.addEventListener('Dolibarr:Init', function () {
 			showAllowedTypes: true,        // Show allowed types info in dropzone
 			showImagePreview: true,         // Show image preview
 
-			showDeleteBtn : false // TODO probleme de clic le prevent default fonctionne pas
+			showDeleteBtn : true
 		};
 
 		// --- Merge params ---
@@ -87,17 +87,10 @@ document.addEventListener('Dolibarr:Init', function () {
 			const msg = Dolibarr.tools.langs.trans(param.multiple ? 'ExperimentalUxInputFilesDropZoneText' : 'ExperimentalUxInputFileDropZoneText');
 			const infoContainer = document.createElement('div');
 			infoContainer.className = 'ddfiledropinfos';
-			infoContainer.innerHTML = msg;
-
-			// --- File info display ---
-			const fileInfo = document.createElement('div');
-			fileInfo.className = 'ddfileinfo';
-			infoContainer.appendChild(fileInfo);
-
-			// --- Container for image previews ---
-			const previewContainer = document.createElement('div');
-			previewContainer.className = 'ddfilepreviews';
-			infoContainer.appendChild(previewContainer);
+			const msgDiv = document.createElement('div');
+			msgDiv.className = 'ddfiledropmsg';
+			msgDiv.innerHTML = msg;
+			infoContainer.appendChild(msgDiv);
 
 			// --- Constraints display ---
 			const constraints = [];
@@ -116,6 +109,11 @@ document.addEventListener('Dolibarr:Init', function () {
 				constraintDiv.innerHTML = constraints.join('<br>');
 				infoContainer.appendChild(constraintDiv);
 			}
+
+			// --- File info display ---
+			const fileInfo = document.createElement('div');
+			fileInfo.className = 'ddfileinfo';
+			infoContainer.appendChild(fileInfo);
 
 			wrapper.appendChild(infoContainer);
 
@@ -152,7 +150,6 @@ document.addEventListener('Dolibarr:Init', function () {
 				const errors = [];
 				const dt = new DataTransfer(); // To store valid files
 				fileInfo.innerHTML = '';
-				if (param.showImagePreview) previewContainer.innerHTML = '';
 
 				if (!files || !files.length) return;
 
@@ -182,55 +179,50 @@ document.addEventListener('Dolibarr:Init', function () {
 					if (!valid) return;
 
 					dt.items.add(file);
+					fileInfo.style.display = 'block';
 
-					// --- File row with remove button ---
+					// --- File size ---
+					const sizeFmt = file.size > 1024 * 1024
+						? (file.size / 1024 / 1024).toFixed(2) + ' MB'
+						: (file.size / 1024).toFixed(1) + ' KB';
+
+					// --- File row: thumbnail | name + size | delete ---
 					const fileRow = document.createElement('div');
 					fileRow.className = 'ddfile-row';
-					if(param.showDeleteBtn) {
 
-					}
-					fileRow.innerHTML = `<span>${file.name}</span>` + (param.showDeleteBtn ? '<button type="button">×</button>' : '');
-					fileInfo.appendChild(fileRow);
+					// Thumbnail
+					const thumb = document.createElement('div');
+					thumb.className = 'ddfile-thumb';
 
-					if(param.showDeleteBtn) {
-						const removeBtn = fileRow.querySelector('button');
-						// --- Remove file row on click ---
+					// Meta (name + size)
+					const meta = document.createElement('div');
+					meta.className = 'ddfile-meta';
+					meta.innerHTML = `<span class="ddfile-name">${file.name}</span><span class="ddfile-size">${sizeFmt}</span>`;
+
+					fileRow.appendChild(thumb);
+					fileRow.appendChild(meta);
+
+					if (param.showDeleteBtn) {
+						const removeBtn = document.createElement('button');
+						removeBtn.type = 'button';
+						removeBtn.innerHTML = '<i class="fas fa-times em092"></i>';
 						removeBtn.addEventListener('click', (e) => {
 							e.preventDefault();
-							e.stopPropagation(); // BLOCK propagation
+							e.stopPropagation();
 							fileInfo.removeChild(fileRow);
-							if (imgPreview) previewContainer.removeChild(imgPreview);
 							updateInputFiles();
 						});
+						fileRow.appendChild(removeBtn);
 					}
 
+					fileInfo.appendChild(fileRow);
 
-
-					// --- Image preview ---
-					let imgPreview = null;
+					// --- Image preview in thumbnail ---
 					if (param.showImagePreview && file.type.startsWith('image/')) {
 						const reader = new FileReader();
 						reader.onload = function(e) {
-							imgPreview = document.createElement('div');
-							imgPreview.className = 'ddfilepreview';
-							imgPreview.style.backgroundImage = `url(${e.target.result})`;
-							if(param.showDeleteBtn) {
-								const imgRemove = document.createElement('span');
-								imgRemove.textContent = '×';
-								imgPreview.appendChild(imgRemove);
-							}
-							previewContainer.appendChild(imgPreview);
-
-							if(param.showDeleteBtn) {
-								imgRemove.addEventListener('click', (e) => {
-									e.preventDefault();
-									e.stopPropagation(); // BLOCK propagation
-									fileInfo.removeChild(fileRow);
-									previewContainer.removeChild(imgPreview);
-									updateInputFiles();
-								});
-							}
-						}
+							thumb.style.backgroundImage = `url(${e.target.result})`;
+						};
 						reader.readAsDataURL(file);
 					}
 
@@ -240,7 +232,7 @@ document.addEventListener('Dolibarr:Init', function () {
 				// --- Update inputFile.files after removing ---
 				function updateInputFiles() {
 					const remainingFiles = [];
-					const fileRows = fileInfo.querySelectorAll('.ddfile-row span');
+					const fileRows = fileInfo.querySelectorAll('.ddfile-row .ddfile-name');
 					fileRows.forEach(span => {
 						const name = span.textContent;
 						Array.from(dt.files).forEach(f => { if (f.name === name) remainingFiles.push(f); });
@@ -253,14 +245,6 @@ document.addEventListener('Dolibarr:Init', function () {
 				// --- Show errors in dropzone ---
 				if (errors.length) {
 					fileInfo.innerHTML = '<div class="ddfile-error">' + errors.join('<br>') + '</div>';
-					fileInfo.style.display = 'block';
-				}
-
-				// --- Show valid files ---
-				const validNames = Array.from(dt.files).map(f => f.name);
-				if (validNames.length) {
-					const langMsg = Dolibarr.tools.langs.trans('Files');
-					fileInfo.innerHTML += '<b>' + langMsg + ':</b><br>' + validNames.join('<br>');
 					fileInfo.style.display = 'block';
 				}
 
