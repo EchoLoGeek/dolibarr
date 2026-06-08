@@ -304,14 +304,15 @@ class DolEditor
 					$dolsubstitpath = dol_buildpath('/core/js/ckeditor/plugins/dolsubstitution/', 1);
 					$dolsubstitmode = ($this->substitutionmode === 'key' ? 'key' : 'value');
 					$dolsubstitlabels = array(
-						'title' => $langs->trans('InsertSubstitutionVariable'),
-						'search' => $langs->trans('SearchAVariable'),
-						'empty' => $langs->trans('NoVariableFound'),
-						'groupObject' => $langs->trans('SubstitGroupObject'),
-						'groupCompany' => $langs->trans('SubstitGroupCompany'),
-						'groupThirdparty' => $langs->trans('SubstitGroupThirdparty'),
-						'groupUser' => $langs->trans('SubstitGroupUser'),
-						'groupDate' => $langs->trans('SubstitGroupDate'),
+						'title' => $langs->transnoentities('InsertSubstitutionVariable'),
+						'search' => $langs->transnoentities('SearchAVariable'),
+						'empty' => $langs->transnoentities('NoVariableFound'),
+						'showEmpty' => $langs->transnoentities('ShowVariablesWithoutValue'),
+						'groupObject' => $langs->transnoentities('SubstitGroupObject'),
+						'groupCompany' => $langs->transnoentities('SubstitGroupCompany'),
+						'groupThirdparty' => $langs->transnoentities('SubstitGroupThirdparty'),
+						'groupUser' => $langs->transnoentities('SubstitGroupUser'),
+						'groupDate' => $langs->transnoentities('SubstitGroupDate'),
 					);
 					$dolsubstitaddexternal = 'CKEDITOR.plugins.addExternal(\'dolsubstitution\', \''.dol_escape_js($dolsubstitpath).'\', \'plugin.js\');'."\n".'                            ';
 					$dolsubstitconfigjs = "\n".'										extraPlugins: \'dolsubstitution\','

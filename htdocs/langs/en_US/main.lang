@@ -36,6 +36,7 @@ AvailableVariables=Available substitution variables
 InsertSubstitutionVariable=Insert a substitution variable
 SearchAVariable=Search a variable...
 NoVariableFound=No variable found
+ShowVariablesWithoutValue=Show variables without value
 SubstitGroupObject=Object
 SubstitGroupCompany=Company
 SubstitGroupThirdparty=Third party

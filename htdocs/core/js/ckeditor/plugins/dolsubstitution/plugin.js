@@ -54,6 +54,8 @@
 		'}' +
 		'.dolsubstit_searchwrap { padding: 8px; border-bottom: 1px solid #eee; }' +
 		'.dolsubstit_search { width: 100%; box-sizing: border-box; padding: 5px 8px; border: 1px solid #ccc; border-radius: 3px; font-size: 13px; }' +
+		'.dolsubstit_toggle { display: block; margin-top: 6px; font-size: 12px; color: #555; cursor: pointer; user-select: none; }' +
+		'.dolsubstit_toggle input { margin-right: 5px; vertical-align: middle; }' +
 		'.dolsubstit_list { max-height: 320px; overflow-y: auto; }' +
 		'.dolsubstit_group { padding: 6px 10px 2px 10px; font-size: 11px; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: .03em; }' +
 		'.dolsubstit_item { display: flex; justify-content: space-between; gap: 12px; padding: 5px 10px; cursor: pointer; }' +
@@ -119,8 +121,12 @@
 				['date', labels.groupDate || 'Date']
 			];
 
-			var panel = null;       // The DOM panel element (lazy-built).
-			var searchInput = null; // The search <input> element.
+			var panel = null;        // The DOM panel element (lazy-built).
+			var searchInput = null;  // The search <input> element.
+			// Whether to show keys that have no (empty) value.
+			// Default: hidden on the send form ('value'), but shown for templates ('key') where keys
+			// are inserted regardless of the current object's value. Toggleable in the panel.
+			var showEmpty = (mode === 'key');
 
 			/**
 			 * Insert the chosen variable into the editor content.
@@ -153,6 +159,9 @@
 						continue;
 					}
 					var val = (list[k] === null || list[k] === undefined) ? '' : String(list[k]);
+					if (!showEmpty && val.replace(/^\s+|\s+$/g, '') === '') {
+						continue; // Hide keys without a value unless the user asked to show them.
+					}
 					if (filter && k.toLowerCase().indexOf(filter) === -1 && val.toLowerCase().indexOf(filter) === -1) {
 						continue;
 					}
@@ -207,8 +216,12 @@
 				panel = new CKEDITOR.dom.element('div');
 				panel.addClass('dolsubstit_panel');
 				panel.setHtml(
-					'<div class="dolsubstit_searchwrap"><input type="text" class="dolsubstit_search" placeholder="'
-					+ CKEDITOR.tools.htmlEncode(labels.search || 'Search a variable...') + '"></div>'
+					'<div class="dolsubstit_searchwrap">'
+					+ '<input type="text" class="dolsubstit_search" placeholder="'
+					+ CKEDITOR.tools.htmlEncode(labels.search || 'Search a variable...') + '">'
+					+ '<label class="dolsubstit_toggle"><input type="checkbox" class="dolsubstit_showempty"> '
+					+ CKEDITOR.tools.htmlEncode(labels.showEmpty || 'Show variables without value') + '</label>'
+					+ '</div>'
 					+ '<div class="dolsubstit_list"></div>'
 				);
 				CKEDITOR.document.getBody().append(panel);
@@ -219,6 +232,12 @@
 						hidePanel();
 						return;
 					}
+					renderList(searchInput.getValue());
+				});
+
+				var showEmptyCb = panel.findOne('.dolsubstit_showempty');
+				showEmptyCb.on('change', function () {
+					showEmpty = !!showEmptyCb.$.checked;
 					renderList(searchInput.getValue());
 				});
 
@@ -250,6 +269,10 @@
 					var scrollY = window.pageYOffset || document.documentElement.scrollTop;
 					panel.setStyle('top', (rect.bottom + scrollY + 2) + 'px');
 					panel.setStyle('left', (rect.left + scrollX) + 'px');
+				}
+				var showEmptyCb = panel.findOne('.dolsubstit_showempty');
+				if (showEmptyCb) {
+					showEmptyCb.$.checked = showEmpty;
 				}
 				renderList('');
 				if (searchInput) {
