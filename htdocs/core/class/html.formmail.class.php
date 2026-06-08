@@ -1167,6 +1167,12 @@ class FormMail extends Form
 					// $uselocalbrowser = true;
 
 					$doleditor = new DolEditor('message', $defaultmessage, '', 280, $this->ckeditortoolbar, 'In', true, $uselocalbrowser, $this->withfckeditor, 8, '95%');
+					// Enable the "insert variable" button (plugin dolsubstitution). On the send form, we insert the
+					// resolved value (e.g. "EUR") because the message is sent as is.
+					if (!empty($this->substit) && is_array($this->substit)) {
+						$doleditor->substitutionarray = $this->substit;
+						$doleditor->substitutionmode = 'value';
+					}
 					$out .= $doleditor->Create(1);
 				}
 				$out .= "</td></tr>\n";

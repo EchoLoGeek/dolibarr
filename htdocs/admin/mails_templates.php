@@ -187,6 +187,10 @@ if (!getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 
 	$tmp = FormMail::getAvailableSubstitKey('formemail', $targetobject);
 
+	// Arrays of __KEY__ => preview value used by the "insert variable" editor button (key mode).
+	$substitarrayforemail = $tmp;
+	$substitarrayforlines = $tmp;
+
 	$tmp['__(AnyTranslationKey)__'] = 'Translation';
 	$helpsubstit = $langs->trans("AvailableVariables").':<br>';
 	$helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
@@ -199,6 +203,9 @@ if (!getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 
 	$tmp = FormMail::getAvailableSubstitKey('formemailwithlines', $targetobject);
 
+	// Array of __KEY__ => preview value used by the "insert variable" editor button (key mode), topic + content.
+	$substitarrayforemail = $tmp;
+
 	$tmp['__(AnyTranslationKey)__'] = 'Translation';
 	$helpsubstit = $langs->trans("AvailableVariables").':<br>';
 	$helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
@@ -206,6 +213,10 @@ if (!getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 		$helpsubstit .= $key.' -> '.$val.'<br>';
 	}
 	$tmp = FormMail::getAvailableSubstitKey('formemailforlines');
+
+	// Array of __KEY__ => preview value used by the "insert variable" editor button (key mode), content_lines.
+	$substitarrayforlines = $tmp;
+
 	foreach ($tmp as $key => $val) {
 		$helpsubstitforlines .= $key.' -> '.$val.'<br>';
 	}
@@ -993,6 +1004,9 @@ if ($action == 'create') {
 				$okforextended = false;
 			}
 			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : ''), '', 400, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
+			// Enable the "insert variable" button. In templates we insert the __KEY__ marker (substituted at sending time).
+			$doleditor->substitutionarray = ($tmpfieldlist == 'content_lines' ? (isset($substitarrayforlines) ? $substitarrayforlines : array()) : (isset($substitarrayforemail) ? $substitarrayforemail : array()));
+			$doleditor->substitutionmode = 'key';
 			print $doleditor->Create(1);
 		}
 		print '</div>';
@@ -1275,6 +1289,9 @@ if ($num) {
 								$okforextended = false;
 							}
 							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 450, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '80%', ($action != 'edit' ? 1 : 0));
+							// Enable the "insert variable" button. In templates we insert the __KEY__ marker (substituted at sending time).
+							$doleditor->substitutionarray = (isset($substitarrayforemail) ? $substitarrayforemail : array());
+							$doleditor->substitutionmode = 'key';
 							print $doleditor->Create(1);
 						}
 						if ($tmpfieldlist == 'content_lines') {
@@ -1285,6 +1302,9 @@ if ($num) {
 								$okforextended = false;
 							}
 							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', false, $acceptlocallinktomedia, $okforextended, ROWS_6, '80%');
+							// Enable the "insert variable" button. In templates we insert the __KEY__ marker (substituted at sending time).
+							$doleditor->substitutionarray = (isset($substitarrayforlines) ? $substitarrayforlines : array());
+							$doleditor->substitutionmode = 'key';
 							print $doleditor->Create(1);
 						}
 						print '</div>';

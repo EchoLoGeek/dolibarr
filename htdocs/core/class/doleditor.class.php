@@ -91,6 +91,17 @@ class DolEditor
 	 * @var int
 	 */
 	public $posy;
+	/**
+	 * @var ?array<string,string>	List of substitution variables (__KEY__ => value) to offer through the
+	 *                              "insert variable" button. When set (and tool is ckeditor), the custom
+	 *                              CKEditor plugin 'dolsubstitution' is loaded for this editor instance.
+	 */
+	public $substitutionarray = null;
+	/**
+	 * @var string	'value' = insert the resolved value (e.g. on the email send form),
+	 *              'key' = insert the __KEY__ marker (e.g. when editing email templates).
+	 */
+	public $substitutionmode = 'value';
 
 
 	/**
@@ -284,6 +295,29 @@ class DolEditor
 
 				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
 
+				// If a substitution array is provided, load the custom 'dolsubstitution' plugin (button to insert
+				// substitution variables) for this editor instance only.
+				$dolsubstitaddexternal = '';
+				$dolsubstitconfigjs = '';
+				if (!empty($this->substitutionarray) && is_array($this->substitutionarray)) {
+					$jsonflags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
+					$dolsubstitpath = dol_buildpath('/core/js/ckeditor/plugins/dolsubstitution/', 1);
+					$dolsubstitmode = ($this->substitutionmode === 'key' ? 'key' : 'value');
+					$dolsubstitlabels = array(
+						'title' => $langs->trans('InsertSubstitutionVariable'),
+						'search' => $langs->trans('SearchAVariable'),
+						'empty' => $langs->trans('NoVariableFound'),
+						'groupObject' => $langs->trans('SubstitGroupObject'),
+						'groupCompany' => $langs->trans('SubstitGroupCompany'),
+						'groupThirdparty' => $langs->trans('SubstitGroupThirdparty'),
+						'groupUser' => $langs->trans('SubstitGroupUser'),
+						'groupDate' => $langs->trans('SubstitGroupDate'),
+					);
+					$dolsubstitaddexternal = 'CKEDITOR.plugins.addExternal(\'dolsubstitution\', \''.dol_escape_js($dolsubstitpath).'\', \'plugin.js\');'."\n".'                            ';
+					$dolsubstitconfigjs = "\n".'										extraPlugins: \'dolsubstitution\','
+						."\n".'										dolsubstitution: {mode: \''.$dolsubstitmode.'\', list: '.json_encode($this->substitutionarray, $jsonflags).', labels: '.json_encode($dolsubstitlabels, $jsonflags).'},';
+				}
+
 				$out .= '<!-- Output ckeditor disallowAnyContent='.dol_escape_htmltag((string) $restrictContent).' toolbarname='.dol_escape_htmltag($this->toolbarname).' -->'."\n";
 				//$out .= '<style>#cke_1_top { height: 34px !important; }</style>';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">
@@ -291,11 +325,11 @@ class DolEditor
 							/* console.log("Run ckeditor"); */
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
                             /* should be editor=CKEDITOR.replace but what if there is several editors ? */
-                            tmpeditor = CKEDITOR.replace(\''.dol_escape_js($this->htmlname).'\',
+                            '.$dolsubstitaddexternal.'tmpeditor = CKEDITOR.replace(\''.dol_escape_js($this->htmlname).'\',
             					{
             						/* property: xxx is same than CKEDITOR.config.property = xxx */
             						customConfig: ckeditorConfig,
-									removePlugins: \''.dol_escape_js($pluginstodisable).'\',
+									removePlugins: \''.dol_escape_js($pluginstodisable).'\','.$dolsubstitconfigjs.'
 									versionCheck: false,
             						readOnly: '.($this->readonly ? 'true' : 'false').',
                             		htmlEncodeOutput: '.dol_escape_js($htmlencode_force).',
